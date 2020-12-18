@@ -7,12 +7,12 @@
 
 
 // Replace the next variables with your SSID/Password combination
-const char* ssid = "1234";
-const char* password = "1234";
+const char* ssid = "MEO-LEVEL1";
+const char* password = "c19371c76b";
 
 // Add your MQTT Broker IP address, example:
 //const char* mqtt_server = "192.168.1.144";
-const char* mqtt_server = "192.168.1.144";
+const char* mqtt_server = "192.168.1.132";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -74,7 +74,7 @@ void callback(char* topic, byte* message, unsigned int length) {
 
   // If a message is received on the topic esp32/output, you check if the message is either "on" or "off". 
   // Changes the output state according to the message
-  if (String(topic) == "esp32/output") {
+  if (String(topic) == "esp32/device") {
     Serial.print("Changing output to ");
     if(messageTemp == "on"){
       Serial.println("on");
@@ -95,7 +95,7 @@ void reconnect() {
     if (client.connect("ESP8266Client")) {
       Serial.println("connected");
       // Subscribe
-      client.subscribe("esp32/output");
+      client.subscribe("esp32/device");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -140,7 +140,7 @@ bool sendRequest(const char* host, const char* resource) {
     // Build your own object tree in memory to store the data you want to send in the request
     
     root["sensor"] = "BLE";
-    root["mac"], "11-11-11-11-11";
+    root["mac"]= "11-11-11-11-11";
     
   
   // Generate the JSON string
@@ -152,7 +152,7 @@ bool sendRequest(const char* host, const char* resource) {
 
   char output[100];
   serializeJson(root, output);
-  if (client.publish("esp/device", output) == true) {
+  if (client.publish("esp32/device", output) == true) {
     Serial.println("Success sending message");
   } else {
     Serial.println("Error sending message");
