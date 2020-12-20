@@ -8,27 +8,65 @@
 #include <BLEEddystoneURL.h>
 #include <BLEEddystoneTLM.h>
 #include <BLEBeacon.h>
+#include <ArduinoJson.h>
 
 #define ENDIAN_CHANGE_U16(x) ((((x)&0xFF00) >> 8) + (((x)&0xFF) << 8))
 
 int scanTime = 5; //In seconds
 BLEScan *pBLEScan;
+//variable that holds the number of beacons using EddyStone and iBeacon 
+volatile int n_beacons = 0; 
+//array that contains the scanned MACs address  
+volatile char mac_array [1000][12];
+
+//function that gets the beacon's MAC address and fills the array holding them
+void get_mac_addr(BLEAdvertisedDevice advertisedDevice)
+{
+   char mac_addr[12];
+   int b = 0; 
+   for(int i = 0; i < 18; i++)
+   {
+     char half_byte = advertisedDevice.getAddress().toString()[i]; 
+     if(half_byte != ':')
+     {
+        mac_addr[b] = half_byte; 
+        mac_array[n_beacons][b] = half_byte;  
+        b ++ ;  
+     }
+   } 
+   
+   //Serial.printf("\n Mac Address: %s \n",mac_addr);       
+   /*
+   String s = "";  
+   for(int i = 0; i<12; i++)
+   {
+      s = s + mac_addr[i]; 
+   }
+   Serial.println(s);
+   */
+   n_beacons++;
+}
 
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
-{
+{ 
+    
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
+      
       if (advertisedDevice.haveName())
       {
-        /*Serial.print("Device name: ");
+        /*
+        Serial.print("Device name: ");
         Serial.println(advertisedDevice.getName().c_str());
-        Serial.println("");*/
+        Serial.println("");
+        */
       }
 
       if (advertisedDevice.haveServiceUUID())
       {
-        /*
+       
         BLEUUID devUUID = advertisedDevice.getServiceUUID();
+        /*
         Serial.print("Found ServiceUUID: ");
         Serial.println(devUUID.toString().c_str());
         Serial.println("");
@@ -51,10 +89,11 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
             oBeacon.setData(strManufacturerData);
             Serial.printf("iBeacon Frame\n");
             Serial.printf("ID: %04X Major: %d Minor: %d UUID: %s Power: %d\n", oBeacon.getManufacturerId(), ENDIAN_CHANGE_U16(oBeacon.getMajor()), ENDIAN_CHANGE_U16(oBeacon.getMinor()), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
+            get_mac_addr(advertisedDevice); 
           }
           else
           {
-            
+            /*
             Serial.println("Found another manufacturers beacon!");
             Serial.printf("strManufacturerData: %d ", strManufacturerData.length());
             for (int i = 0; i < strManufacturerData.length(); i++)
@@ -62,12 +101,12 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
               Serial.printf("[%X]", cManufacturerData[i]);
             }
             Serial.printf("\n");
-            
+            */
           }
         }
         return;
       }
-
+      
       uint8_t *payLoad = advertisedDevice.getPayload();
 
       BLEUUID checkUrlUUID = (uint16_t)0xfeaa;
@@ -126,11 +165,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
         }
         else if (payLoad[11] == 0x00)
         {
-          Serial.print("\n---------------------\n");
-          Serial.print("Found UID EddyStone Beacon\n");
-          Serial.print("\n---------------------\n");
-          Serial.print("\n");
-          
+          Serial.print("\nFound UID EddyStone Beacon\n");          
           signed int f = payLoad[12]; 
           const int negative = (f & (1 << 7)) != 0;
           int nativeInt;
@@ -154,8 +189,8 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
             byte j = payLoad[k];
             Serial.printf("%x", j);
           }
-          Serial.println();
         }
+        get_mac_addr(advertisedDevice);
       }
     }
 };
@@ -176,10 +211,32 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly:
+  n_beacons = 0; 
   BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
   Serial.print("Devices found: ");
   Serial.println(foundDevices.getCount());
-  Serial.println("Scan done!");
+   Serial.println("\nScan done!");
+
+   
+  char mac_array_final [n_beacons][12]; 
+   
+  for(int i = 0; i < n_beacons; i++)
+  {
+    //Print da info dos beacons
+    Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+    
+    //Eliminação dos dados guardados na variável dos MACs
+    for(int k = 0; k < 12; k++)
+    {
+      mac_array_final[i][k] = mac_array[i][k];  
+      mac_array[i][k] = NULL;   
+    }
+  }
+  //Fazer Parse aqui, depois do Scan ter terminado.
+  StaticJsonDocument<256> root;
+  root["mac"] = serialized(mac_array_final);
+  serializeJson(root, Serial);
+ 
   pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
-  delay(2000);
+  delay(2000);  
 }
