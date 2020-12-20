@@ -79,11 +79,11 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 
           if (strManufacturerData.length() == 25 && cManufacturerData[0] == 0x4C && cManufacturerData[1] == 0x00)
           {
-            Serial.println("Found an iBeacon!");
+//            Serial.println("Found an iBeacon!");
             BLEBeacon oBeacon = BLEBeacon();
             oBeacon.setData(strManufacturerData);
-            Serial.printf("iBeacon Frame\n");
-            Serial.printf("ID: %04X Major: %d Minor: %d UUID: %s Power: %d\n", oBeacon.getManufacturerId(), ENDIAN_CHANGE_U16(oBeacon.getMajor()), ENDIAN_CHANGE_U16(oBeacon.getMinor()), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
+//            Serial.printf("iBeacon Frame\n");
+//            Serial.printf("ID: %04X Major: %d Minor: %d UUID: %s Power: %d\n", oBeacon.getManufacturerId(), ENDIAN_CHANGE_U16(oBeacon.getMajor()), ENDIAN_CHANGE_U16(oBeacon.getMinor()), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
             get_mac_addr(advertisedDevice); 
           }
        
@@ -99,7 +99,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
       {
         if (payLoad[11] == 0x10)
         {
-          Serial.println("Found an EddystoneURL beacon!");
+//          Serial.println("Found an EddystoneURL beacon!");
           BLEEddystoneURL foundEddyURL = BLEEddystoneURL();
           std::string eddyContent((char *)&payLoad[11]); // incomplete EddystoneURL struct!
 
@@ -117,10 +117,10 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
             return;
           }
 
-          Serial.printf("Found URL: %s\n", foundEddyURL.getURL().c_str());
-          Serial.printf("Decoded URL: %s\n", foundEddyURL.getDecodedURL().c_str());
-          Serial.printf("TX power %d\n", foundEddyURL.getPower());
-          Serial.println("\n");
+//          Serial.printf("Found URL: %s\n", foundEddyURL.getURL().c_str());
+//          Serial.printf("Decoded URL: %s\n", foundEddyURL.getDecodedURL().c_str());
+//          Serial.printf("TX power %d\n", foundEddyURL.getPower());
+//          Serial.println("\n");
         }
         else if (payLoad[11] == 0x20)
         {
@@ -136,16 +136,16 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
           }
 
           foundEddyURL.setData(eddyContent);
-          Serial.printf("Reported battery voltage: %dmV\n", foundEddyURL.getVolt());
-          Serial.printf("Reported temperature from TLM class: %.2fC\n", (double)foundEddyURL.getTemp());
+//          Serial.printf("Reported battery voltage: %dmV\n", foundEddyURL.getVolt());
+//          Serial.printf("Reported temperature from TLM class: %.2fC\n", (double)foundEddyURL.getTemp());
           int temp = (int)payLoad[16] + (int)(payLoad[15] << 8);
           float calcTemp = temp / 256.0f;
-          Serial.printf("Reported temperature from data: %.2fC\n", calcTemp);
-          Serial.printf("Reported advertise count: %d\n", foundEddyURL.getCount());
-          Serial.printf("Reported time since last reboot: %ds\n", foundEddyURL.getTime());
-          Serial.println("\n");
-          Serial.print(foundEddyURL.toString().c_str());
-          Serial.println("\n");
+//          Serial.printf("Reported temperature from data: %.2fC\n", calcTemp);
+//          Serial.printf("Reported advertise count: %d\n", foundEddyURL.getCount());
+//          Serial.printf("Reported time since last reboot: %ds\n", foundEddyURL.getTime());
+//          Serial.println("\n");
+//          Serial.print(foundEddyURL.toString().c_str());
+//          Serial.println("\n");
         }
         else if (payLoad[11] == 0x00)
         {
