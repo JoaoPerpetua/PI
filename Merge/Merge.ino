@@ -1,14 +1,12 @@
 
-#include <Arduino.h>
 
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
-#include <BLEEddystoneURL.h>
-#include <BLEEddystoneTLM.h>
-#include <BLEBeacon.h>
+
 #include <WiFi.h>
+
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <ArduinoJson.h>
@@ -23,7 +21,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
-int value = 0;
+uint8_t value = 0;
 
 
 
@@ -39,7 +37,7 @@ void get_mac_addr(BLEAdvertisedDevice advertisedDevice)
 {
    char mac_addr[12];
    uint8_t b = 0; 
-   for(uint8_t i = 0; i < 18; i++)
+   for( i = 0; i < 18; i++)
    {
      char half_byte = advertisedDevice.getAddress().toString()[i]; 
      if(half_byte != ':')
@@ -49,27 +47,16 @@ void get_mac_addr(BLEAdvertisedDevice advertisedDevice)
         b ++ ;  
      }
    } 
-   
-   //Serial.printf("\n Mac Address: %s \n",mac_addr);       
- 
+  
    n_beacons++;
 }
-
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 { 
     
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
       
-
-      if (advertisedDevice.haveServiceUUID())
-      {
-       
-        BLEUUID devUUID = advertisedDevice.getServiceUUID();
-      
-      }
-      else
-      {
+           
         if (advertisedDevice.haveManufacturerData() == true)
         {
           std::string strManufacturerData = advertisedDevice.getManufacturerData();
@@ -79,15 +66,9 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 
           if (strManufacturerData.length() == 25 && cManufacturerData[0] == 0x4C && cManufacturerData[1] == 0x00)
           {
-//            Serial.println("Found an iBeacon!");
-            BLEBeacon oBeacon = BLEBeacon();
-            oBeacon.setData(strManufacturerData);
-//            Serial.printf("iBeacon Frame\n");
-//            Serial.printf("ID: %04X Major: %d Minor: %d UUID: %s Power: %d\n", oBeacon.getManufacturerId(), ENDIAN_CHANGE_U16(oBeacon.getMajor()), ENDIAN_CHANGE_U16(oBeacon.getMinor()), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
             get_mac_addr(advertisedDevice); 
           }
-       
-        }
+   
         return;
       }
       
@@ -97,83 +78,6 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 
       if (advertisedDevice.getServiceUUID().equals(checkUrlUUID))
       {
-        if (payLoad[11] == 0x10)
-        {
-//          Serial.println("Found an EddystoneURL beacon!");
-          BLEEddystoneURL foundEddyURL = BLEEddystoneURL();
-          std::string eddyContent((char *)&payLoad[11]); // incomplete EddystoneURL struct!
-
-          foundEddyURL.setData(eddyContent);
-          std::string bareURL = foundEddyURL.getURL();
-          if (bareURL[0] == 0x00)
-          {
-            size_t payLoadLen = advertisedDevice.getPayloadLength();
-            Serial.println("DATA-->");
-            for (int idx = 0; idx < payLoadLen; idx++)
-            {
-              Serial.printf("0x%08X ", payLoad[idx]);
-            }
-            Serial.println("\nInvalid Data");
-            return;
-          }
-
-//          Serial.printf("Found URL: %s\n", foundEddyURL.getURL().c_str());
-//          Serial.printf("Decoded URL: %s\n", foundEddyURL.getDecodedURL().c_str());
-//          Serial.printf("TX power %d\n", foundEddyURL.getPower());
-//          Serial.println("\n");
-        }
-        else if (payLoad[11] == 0x20)
-        {
-          Serial.println("Found an EddystoneTLM beacon!");
-          BLEEddystoneTLM foundEddyURL = BLEEddystoneTLM();
-          std::string eddyContent((char *)&payLoad[11]); // incomplete EddystoneURL struct!
-
-          eddyContent = "01234567890123";
-
-          for (uint8_t idx = 0; idx < 14; idx++)
-          {
-            eddyContent[idx] = payLoad[idx + 11];
-          }
-
-          foundEddyURL.setData(eddyContent);
-//          Serial.printf("Reported battery voltage: %dmV\n", foundEddyURL.getVolt());
-//          Serial.printf("Reported temperature from TLM class: %.2fC\n", (double)foundEddyURL.getTemp());
-          int temp = (int)payLoad[16] + (int)(payLoad[15] << 8);
-          float calcTemp = temp / 256.0f;
-//          Serial.printf("Reported temperature from data: %.2fC\n", calcTemp);
-//          Serial.printf("Reported advertise count: %d\n", foundEddyURL.getCount());
-//          Serial.printf("Reported time since last reboot: %ds\n", foundEddyURL.getTime());
-//          Serial.println("\n");
-//          Serial.print(foundEddyURL.toString().c_str());
-//          Serial.println("\n");
-        }
-        else if (payLoad[11] == 0x00)
-        {
-          Serial.print("\nFound UID EddyStone Beacon\n");          
-          signed int f = payLoad[12]; 
-          const int negative = (f & (1 << 7)) != 0;
-          int nativeInt;
-
-          if (negative)
-            nativeInt = f | ~((1 << 8) - 1);
-          else
-            nativeInt = f;
-            
-          Serial.printf("RSSI @ 0m: %d dBm", nativeInt);
-          Serial.print("\n");
-          Serial.print("NameSpace ID: ");
-          for(int k = 13; k < 23; k++)
-          {
-            byte j = payLoad[k];
-            Serial.printf("%x", j);
-          }
-          Serial.print("\nInstance ID: ");
-          for(int k = 23; k < 29; k++)
-          {
-            byte j = payLoad[k];
-            Serial.printf("%x", j);
-          }
-        }
         get_mac_addr(advertisedDevice);
       }
     }
@@ -272,8 +176,6 @@ void loop()
   // put your main code here, to run repeatedly:
   n_beacons = 0; 
   BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
-  Serial.print("Devices found: ");
-  Serial.println(foundDevices.getCount());
    Serial.println("\nScan done!");
 
    
