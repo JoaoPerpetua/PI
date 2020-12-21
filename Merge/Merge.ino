@@ -37,7 +37,7 @@ void get_mac_addr(BLEAdvertisedDevice advertisedDevice)
 {
    char mac_addr[12];
    uint8_t b = 0; 
-   for( i = 0; i < 18; i++)
+   for(uint8_t i = 0; i < 18; i++)
    {
      char half_byte = advertisedDevice.getAddress().toString()[i]; 
      if(half_byte != ':')
