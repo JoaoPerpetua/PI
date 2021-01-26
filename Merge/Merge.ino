@@ -15,7 +15,7 @@
 
 const char* ssid = "MEO-LEVEL1";
 const char* password = "c19371c76b";
-const char* mqtt_server = "192.168.1.132";
+const char* mqtt_server = "192.168.1.97";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -180,7 +180,7 @@ void loop()
 
    
   char mac_array_final [n_beacons][12]; 
-   
+
   for(uint8_t i = 0; i < n_beacons; i++)
   {
     //Print da info dos beacons
@@ -190,9 +190,12 @@ void loop()
     for(uint8_t k = 0; k < 12; k++)
     {
       mac_array_final[i][k] = mac_array[i][k];  
-      mac_array[i][k] = NULL;   
+      mac_array[i][k] = NULL;
+      
     }
+    
   }
+ 
   //Fazer Parse aqui, depois do Scan ter terminado.
   StaticJsonDocument<128> root;
   root["mac"] = serialized(mac_array_final);
@@ -200,7 +203,7 @@ void loop()
   pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
     
   
-
+ 
 
   char output[30];
   serializeJson(root, output);
