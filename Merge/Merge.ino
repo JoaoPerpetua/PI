@@ -187,15 +187,19 @@ void loop()
     Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
     
     //Eliminação dos dados guardados na variável dos MACs
-    for(uint8_t k = 0; k < 12; k++)
+   
+  for(uint8_t k = 0; k < 14; k++)
     {
-      mac_array_final[i][k] = mac_array[i][k];  
-      mac_array[i][k] = NULL;
-      
+      if((k==0)||k==14) {
+        mac_array_final[i][k] = '"';
+        
+      }
+      else{
+      mac_array_final[i][k] = mac_array[i][k-1];  
+      mac_array[i][k-1] = NULL;  
+      } 
     }
-    
   }
- 
   //Fazer Parse aqui, depois do Scan ter terminado.
   StaticJsonDocument<128> root;
   root["mac"] = serialized(mac_array_final);
