@@ -179,7 +179,7 @@ void loop()
    Serial.println("\nScan done!");
 
    
-  char mac_array_final [n_beacons][12]; 
+  char mac_array_final [n_beacons][14]; 
 
   for(uint8_t i = 0; i < n_beacons; i++)
   {
@@ -188,17 +188,17 @@ void loop()
     
     //Eliminação dos dados guardados na variável dos MACs
    
-  for(uint8_t k = 0; k < 14; k++)
-    {
-      if((k==0)||k==14) {
-        mac_array_final[i][k] = '"';
-        
-      }
-      else{
-      mac_array_final[i][k] = mac_array[i][k-1];  
-      mac_array[i][k-1] = NULL;  
-      } 
-    }
+      for(uint8_t k = 0; k < 14; k++)
+        {
+          if((k==0)||k==14) {
+            mac_array_final[i][k] = '"';
+            
+          }
+          else{
+          mac_array_final[i][k] = mac_array[i][k-1];  
+          mac_array[i][k-1] = NULL;  
+          } 
+        }
   }
   //Fazer Parse aqui, depois do Scan ter terminado.
   StaticJsonDocument<128> root;
