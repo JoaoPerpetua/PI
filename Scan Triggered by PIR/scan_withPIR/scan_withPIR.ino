@@ -139,6 +139,9 @@ void setup() {
   pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
   pBLEScan->setInterval(100);
   pBLEScan->setWindow(99); // less or equal setInterval value
+  
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34,1);
+  esp_deep_sleep_start();
 }
 
 void loop() {
