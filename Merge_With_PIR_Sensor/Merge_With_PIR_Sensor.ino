@@ -1,6 +1,6 @@
 
 
-#include <BLEDevice.h>
+#include <BLEDevice.h> //Gustavo mete nojo
 #include <BLEUtils.h>
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
