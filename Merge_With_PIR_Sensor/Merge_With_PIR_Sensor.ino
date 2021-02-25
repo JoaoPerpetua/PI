@@ -19,6 +19,7 @@
 // Set GPIOs for LED and PIR Motion Sensor
 const int led = 33;
 const int motionSensor = 34;
+
 // Timer: Auxiliary variables
 unsigned long now = millis();
 unsigned long lastTrigger = 0;
@@ -141,12 +142,49 @@ void send_MQTT_data()
   }
   client.loop();
    
-  char mac_array_final [n_beacons][14]; 
+  char mac_array_final [3][15]; 
 
+   //Ciclo para enviar dados artificiais 
+  for(uint8_t i = 0; i < 3; i++)
+  {
+    //Print da info dos beacons
+    //Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+    
+      //Eliminação dos dados guardados na variável dos MACs
+      for(uint8_t k = 0; k < 15; k++)
+      {
+          if((k==0)||k==14) 
+          {
+            mac_array_final[i][k] = '"';
+          }
+          else if(k==13)
+          {
+            mac_array_final[i][k] = ','; 
+          }
+          else
+          {
+            if(i == 0)
+            {
+              mac_array_final[i][k] = 'X';   
+            } 
+            if(i == 1)
+            {
+              mac_array_final[i][k] = 'Y';   
+            }
+            if(i == 2)
+            {
+              mac_array_final[i][k] = 'Z';   
+            }                           
+           } 
+      }
+  }
+
+   //Ciclo para enviar os dados do Scan 
+  /*
   for(uint8_t i = 0; i < n_beacons; i++)
   {
     //Print da info dos beacons
-    Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+    //Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
     
     //Eliminação dos dados guardados na variável dos MACs
    
@@ -161,13 +199,11 @@ void send_MQTT_data()
           } 
         }
   }
+  */
   //Fazer Parse aqui, depois do Scan ter terminado.
   StaticJsonDocument<128> root;
   root["mac"] = serialized(mac_array_final);
- 
-  pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
-    
- 
+   
   char output[30];
   serializeJson(root, output);
   if (client.publish("esp32/device", output) == true) {
