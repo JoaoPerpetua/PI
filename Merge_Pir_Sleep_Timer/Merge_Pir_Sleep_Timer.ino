@@ -4,7 +4,7 @@
 #include <BLEAdvertisedDevice.h>
 
 #include <WiFi.h>
-
+//wake up - criar timer com 10s - ao fim desses 10s - fazer scan/enviar dados - se houver nova entrada no armazém, wake up novamente e timer é resetado -> testar este conceito 
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <ArduinoJson.h>
@@ -191,7 +191,7 @@ void setup()
 {
   Serial.begin(115200);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_34,0);
-  //delay(10000); 
+  
   BLEDevice::init("");
   pBLEScan = BLEDevice::getScan(); //create new scan
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());

@@ -1,7 +1,5 @@
 
-#include <Arduino.h>
-
-
+/*
 #define LED_PIN 5
 
 hw_timer_t * timer = NULL;
@@ -13,9 +11,11 @@ void IRAM_ATTR onTime() {
   digitalWrite(LED_PIN, HIGH);
   portEXIT_CRITICAL_ISR(&timerMux);
 }
+*/
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_34, 0);
+  /*
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
@@ -27,7 +27,7 @@ void setup() {
   // Sets an alarm to sound every 10 seconds
   timerAlarmWrite(timer, 1000000, true);
   timerAlarmEnable(timer);
-  Serial.print("ZZZZ");
+  Serial.print("ZZZZ");*/
   esp_deep_sleep_start();
 }
 
