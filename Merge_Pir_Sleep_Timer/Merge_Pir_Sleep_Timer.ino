@@ -1,6 +1,4 @@
-
-
-#include <BLEDevice.h> //Gustavo e manu mete nojo
+#include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
@@ -20,11 +18,6 @@
 const int led = 33;
 const int motionSensor = 34;
 
-// Timer: Auxiliary variables
-unsigned long now = millis();
-unsigned long lastTrigger = 0;
-boolean startTimer = false;
-
 
 //MQTT / Network settings
 const char* ssid = "MEO-LEVEL1";
@@ -35,15 +28,15 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
-uint8_t value = 0;
 
+uint8_t value = 0;
 
 
 uint8_t scanTime = 5; //In seconds
 BLEScan *pBLEScan;
 //variable that holds the number of beacons using EddyStone and iBeacon 
 volatile uint8_t n_beacons = 0; 
-//array that contains the scanned MACs address  
+//array that contains the scanned MACs address  (10 macs, neste caso) 
 volatile char mac_array [10][12];
 
 //function that gets the beacon's MAC address and fills the array holding them
@@ -65,13 +58,7 @@ void get_mac_addr(BLEAdvertisedDevice advertisedDevice)
    n_beacons++;
 }
 
-// Checks if motion was detected, sets LED HIGH and starts a timer
-void detectsMovement() {
-  Serial.println("MOTION DETECTED!!!");
-  digitalWrite(led, HIGH);
-  startTimer = true;
-  lastTrigger = millis();
-}
+
 
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 { 
@@ -136,55 +123,19 @@ void scan()
 
 void send_MQTT_data()
 {
+  
   //mqtt
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
-   
-  char mac_array_final [3][15]; 
+  
+  char mac_array_final [n_beacons][14]; 
 
-  //Ciclo para enviar dados artificiais 
-  for(uint8_t i = 0; i < 3; i++)
-  {
-    //Print da info dos beacons
-    //Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
-    
-      //Eliminação dos dados guardados na variável dos MACs
-      for(uint8_t k = 0; k < 15; k++)
-      {
-          if((k==0)||k==14) 
-          {
-            mac_array_final[i][k] = '"';
-          }
-          else if(k==13)
-          {
-            mac_array_final[i][k] = ','; 
-          }
-          else
-          {
-            if(i == 0)
-            {
-              mac_array_final[i][k] = 'X';   
-            } 
-            if(i == 1)
-            {
-              mac_array_final[i][k] = 'Y';   
-            }
-            if(i == 2)
-            {
-              mac_array_final[i][k] = 'Z';   
-            }                           
-           } 
-      }
-  }
-
-   //Ciclo para enviar os dados do Scan 
-  /*
   for(uint8_t i = 0; i < n_beacons; i++)
   {
     //Print da info dos beacons
-    //Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+    Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
     
     //Eliminação dos dados guardados na variável dos MACs
    
@@ -199,11 +150,10 @@ void send_MQTT_data()
           } 
         }
   }
-  */
   //Fazer Parse aqui, depois do Scan ter terminado.
   StaticJsonDocument<128> root;
   root["mac"] = serialized(mac_array_final);
-   
+ 
   char output[30];
   serializeJson(root, output);
   if (client.publish("esp32/device", output) == true) {
@@ -234,43 +184,32 @@ void reconnect() {
   }
 }
 
+
+
+
 void setup()
 {
   Serial.begin(115200);
-//  Serial.println("Scanning...");
-  
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34,0);
+  //delay(10000); 
   BLEDevice::init("");
   pBLEScan = BLEDevice::getScan(); //create new scan
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
   pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
   pBLEScan->setInterval(100);
   pBLEScan->setWindow(99); // less or equal setInterval value
-  // MQTT
+  //MQTT
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   //client.setCallback(callback);
 
-  // PIR Motion Sensor mode INPUT_PULLUP
-  pinMode(motionSensor, INPUT_PULLUP);
-  // Set motionSensor pin as interrupt, assign interrupt function and set RISING mode
-  attachInterrupt(digitalPinToInterrupt(motionSensor), detectsMovement, RISING);
-
-  // Set LED to LOW
-  pinMode(led, OUTPUT);
-  digitalWrite(led, LOW);
+  scan(); 
   
+ 
+  esp_deep_sleep_start();
 }
 
   
 void loop()
 {
-  // Current time
-  now = millis();
-  // Turn off the LED after the number of seconds defined in the timeSeconds variable
-  if(startTimer && (now - lastTrigger > (timeSeconds*1000))) {
-    Serial.println("Motion stopped...");
-    scan(); 
-    digitalWrite(led, LOW);
-    startTimer = false;
-  }
 }
