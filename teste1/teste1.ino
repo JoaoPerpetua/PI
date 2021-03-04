@@ -1,35 +1,25 @@
 
-/*
-#define LED_PIN 5
+#define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP  5        /* Time ESP32 will go to sleep (in seconds) */
 
-hw_timer_t * timer = NULL;
-portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
-
-// Code with critica section
-void IRAM_ATTR onTime() {
-  portENTER_CRITICAL_ISR(&timerMux);
-  digitalWrite(LED_PIN, HIGH);
-  portEXIT_CRITICAL_ISR(&timerMux);
-}
-*/
 void setup() {
-  //Serial.begin(115200);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_34, 0);
-  /*
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);
-
-  // Configure the Prescaler at 80 the quarter of the ESP32 is cadence at 80Mhz
-  // 80000000 / 800 = 100000 tics / seconde
-  timer = timerBegin(0, 800, true);
-  timerAttachInterrupt(timer, &onTime, true);
-
-  // Sets an alarm to sound every 10 seconds
-  timerAlarmWrite(timer, 1000000, true);
-  timerAlarmEnable(timer);
-  Serial.print("ZZZZ");*/
+  //esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP*uS_TO_S_FACTOR);
+  esp_sleep_pd_config(ESP_PD_DOMAIN_MAX, ESP_PD_OPTION_OFF); 
+  //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF); 
+  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF); 
+  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF); 
+  delay(3000); 
   esp_deep_sleep_start();
 }
 
 void loop() {
 }
+
+ /*unsigned long int now = millis(); 
+  Serial.println("Woke up");
+  while(now < (time_seconds*1000))
+  {
+    now = millis(); 
+  }
+  */
