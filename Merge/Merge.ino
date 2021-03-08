@@ -135,7 +135,7 @@ void reconnect() {
     if (client.connect("ESP8266Client")) {
       Serial.println("connected");
       // Subscribe
-      client.subscribe("esp32/device");
+      client.subscribe("esp/device");
     } else {
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
@@ -179,7 +179,7 @@ void loop()
    Serial.println("\nScan done!");
 
    
-  char mac_array_final [n_beacons][14]; 
+  char mac_array_final [n_beacons][13]; 
 
   for(uint8_t i = 0; i < n_beacons; i++)
   {
@@ -190,18 +190,20 @@ void loop()
    
       for(uint8_t k = 0; k < 14; k++)
         {
-          if((k==0)||k==14) {
+          if((k==0)||(k==13)) {
             mac_array_final[i][k] = '"';
             
           }
           else{
           mac_array_final[i][k] = mac_array[i][k-1];  
           mac_array[i][k-1] = NULL;  
-          } 
+         } 
+          //mac_array_final[i][k] = mac_array[i][k];  
+         // mac_array[i][k] = NULL;
         }
   }
   //Fazer Parse aqui, depois do Scan ter terminado.
-  StaticJsonDocument<128> root;
+  StaticJsonDocument<256> root;
   root["mac"] = serialized(mac_array_final);
  
   pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
@@ -211,7 +213,7 @@ void loop()
 
   char output[30];
   serializeJson(root, output);
-  if (client.publish("esp32/device", output) == true) {
+  if (client.publish("esp/device", output) == true) {
     Serial.println("Success sending message");
   } else {
     Serial.println("Error sending message");

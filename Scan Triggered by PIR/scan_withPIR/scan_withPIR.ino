@@ -43,13 +43,6 @@ void get_mac_addr(BLEAdvertisedDevice advertisedDevice)
    n_beacons++;
 }
 
-// Checks if motion was detected, sets LED HIGH and starts a timer
-void detectsMovement() {
-  Serial.println("MOTION DETECTED!!!");
-  digitalWrite(led, HIGH);
-  startTimer = true;
-  lastTrigger = millis();
-}
 
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 { 
@@ -123,14 +116,6 @@ void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
   
-  // PIR Motion Sensor mode INPUT_PULLUP
-  pinMode(motionSensor, INPUT_PULLUP);
-  // Set motionSensor pin as interrupt, assign interrupt function and set RISING mode
-  attachInterrupt(digitalPinToInterrupt(motionSensor), detectsMovement, RISING);
-
-  // Set LED to LOW
-  pinMode(led, OUTPUT);
-  digitalWrite(led, LOW);
 
   //BLE Configurations Setup
   BLEDevice::init("");
@@ -139,16 +124,23 @@ void setup() {
   pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
   pBLEScan->setInterval(100);
   pBLEScan->setWindow(99); // less or equal setInterval value
+  
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34,0);
+  
+  scan(); 
+  Serial.println("ZZZZ"); 
+  esp_deep_sleep_start();
 }
 
 void loop() {
-  // Current time
+  /*// Current time
   now = millis();
   // Turn off the LED after the number of seconds defined in the timeSeconds variable
   if(startTimer && (now - lastTrigger > (timeSeconds*1000))) {
     Serial.println("Motion stopped...");
-    scan(); 
+    
     digitalWrite(led, LOW);
     startTimer = false;
   }
+  */
 }

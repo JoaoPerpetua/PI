@@ -1,6 +1,4 @@
-
-
-#include <BLEDevice.h> //Gustavo e manu mete nojo
+#include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
@@ -19,7 +17,6 @@
 // Set GPIOs for LED and PIR Motion Sensor
 const int led = 33;
 const int motionSensor = 34;
-
 // Timer: Auxiliary variables
 unsigned long now = millis();
 unsigned long lastTrigger = 0;
@@ -30,11 +27,12 @@ boolean startTimer = false;
 const char* ssid = "MEO-LEVEL1";
 const char* password = "c19371c76b";
 const char* mqtt_server = "192.168.1.97";
-
+/**
 WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
+*/
 uint8_t value = 0;
 
 
@@ -105,7 +103,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
       }
     }
 };
-
+/*
 void setup_wifi() {
   delay(10);
   // We start by connecting to a WiFi network
@@ -118,7 +116,7 @@ void setup_wifi() {
     Serial.print(".");
   }
   Serial.println("WiFi connected");
-}
+}*/
 
 void scan()
 {
@@ -136,55 +134,19 @@ void scan()
 
 void send_MQTT_data()
 {
+  /*
   //mqtt
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
-   
-  char mac_array_final [3][15]; 
+   */
+  char mac_array_final [n_beacons][14]; 
 
-  //Ciclo para enviar dados artificiais 
-  for(uint8_t i = 0; i < 3; i++)
-  {
-    //Print da info dos beacons
-    //Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
-    
-      //Eliminação dos dados guardados na variável dos MACs
-      for(uint8_t k = 0; k < 15; k++)
-      {
-          if((k==0)||k==14) 
-          {
-            mac_array_final[i][k] = '"';
-          }
-          else if(k==13)
-          {
-            mac_array_final[i][k] = ','; 
-          }
-          else
-          {
-            if(i == 0)
-            {
-              mac_array_final[i][k] = 'X';   
-            } 
-            if(i == 1)
-            {
-              mac_array_final[i][k] = 'Y';   
-            }
-            if(i == 2)
-            {
-              mac_array_final[i][k] = 'Z';   
-            }                           
-           } 
-      }
-  }
-
-   //Ciclo para enviar os dados do Scan 
-  /*
   for(uint8_t i = 0; i < n_beacons; i++)
   {
     //Print da info dos beacons
-    //Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+    Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
     
     //Eliminação dos dados guardados na variável dos MACs
    
@@ -199,11 +161,10 @@ void send_MQTT_data()
           } 
         }
   }
-  */
   //Fazer Parse aqui, depois do Scan ter terminado.
-  StaticJsonDocument<128> root;
-  root["mac"] = serialized(mac_array_final);
-   
+  //StaticJsonDocument<128> root;
+  //root["mac"] = serialized(mac_array_final);
+ /*
   char output[30];
   serializeJson(root, output);
   if (client.publish("esp32/device", output) == true) {
@@ -211,12 +172,12 @@ void send_MQTT_data()
   } else {
     Serial.println("Error sending message");
   }
-
+*/
   // delete results fromBLEScan buffer to release memory
   pBLEScan->clearResults(); 
   n_beacons = 0; 
 }
-
+/*
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -233,37 +194,12 @@ void reconnect() {
     }
   }
 }
-
-void setup()
-{
-  Serial.begin(115200);
-//  Serial.println("Scanning...");
-  
-  BLEDevice::init("");
-  pBLEScan = BLEDevice::getScan(); //create new scan
-  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
-  pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
-  pBLEScan->setInterval(100);
-  pBLEScan->setWindow(99); // less or equal setInterval value
-  // MQTT
-  setup_wifi();
-  client.setServer(mqtt_server, 1883);
-  //client.setCallback(callback);
-
-  // PIR Motion Sensor mode INPUT_PULLUP
-  pinMode(motionSensor, INPUT_PULLUP);
-  // Set motionSensor pin as interrupt, assign interrupt function and set RISING mode
-  attachInterrupt(digitalPinToInterrupt(motionSensor), detectsMovement, RISING);
-
-  // Set LED to LOW
-  pinMode(led, OUTPUT);
-  digitalWrite(led, LOW);
-  
-}
+*/
+/*
+void go_to_sleep(){
 
   
-void loop()
-{
+
   // Current time
   now = millis();
   // Turn off the LED after the number of seconds defined in the timeSeconds variable
@@ -273,4 +209,41 @@ void loop()
     digitalWrite(led, LOW);
     startTimer = false;
   }
+
+  
+}*/
+
+void setup()
+{
+  Serial.begin(115200);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34,0);
+  
+  BLEDevice::init("");
+  pBLEScan = BLEDevice::getScan(); //create new scan
+  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+  pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
+  pBLEScan->setInterval(100);
+  pBLEScan->setWindow(99); // less or equal setInterval value
+  // MQTT
+  //setup_wifi();
+  //client.setServer(mqtt_server, 1883);
+  //client.setCallback(callback);
+
+  // PIR Motion Sensor mode INPUT_PULLUP
+  //pinMode(motionSensor, INPUT_PULLUP);
+  // Set motionSensor pin as interrupt, assign interrupt function and set RISING mode
+  //attachInterrupt(digitalPinToInterrupt(motionSensor), detectsMovement, RISING);
+
+  // Set LED to LOW
+  pinMode(led, OUTPUT);
+  digitalWrite(led, HIGH);
+  scan(); 
+  digitalWrite(led, LOW);
+ 
+  esp_deep_sleep_start();
+}
+
+  
+void loop()
+{
 }
