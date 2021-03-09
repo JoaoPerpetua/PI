@@ -132,30 +132,74 @@ void send_MQTT_data()
   
   char mac_array_final [n_beacons][14]; 
 
-  for(uint8_t i = 0; i < n_beacons; i++)
+//  for(uint8_t i = 0; i < n_beacons; i++)
+//  {
+//    //Print da info dos beacons
+//    Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+//    
+//    //Eliminação dos dados guardados na variável dos MACs
+//   
+//      for(uint8_t k = 0; k < 14; k++)
+//        {
+//          if((k==0)||k==14) {
+//            mac_array_final[i][k] = '"';
+//          }
+//          else{
+//          mac_array_final[i][k] = mac_array[i][k-1];  
+//          mac_array[i][k-1] = NULL;  
+//          } 
+//        }
+//  }
+
+ DynamicJsonDocument doc(1024);
+
+
+
+
+
+
+
+
+
+char mac_array_ff [14];
+
+for(uint8_t i = 0; i < n_beacons; i++)
   {
     //Print da info dos beacons
     Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+    memset(mac_array_ff, 0, sizeof(mac_array_ff));
     
     //Eliminação dos dados guardados na variável dos MACs
    
       for(uint8_t k = 0; k < 14; k++)
         {
           if((k==0)||k==14) {
-            mac_array_final[i][k] = '"';
+            mac_array_ff[k] = '"';
           }
           else{
-          mac_array_final[i][k] = mac_array[i][k-1];  
+          mac_array_ff[k] = mac_array[i][k-1];  
           mac_array[i][k-1] = NULL;  
           } 
         }
+      doc["mac"][i] = mac_array_ff;
+        
   }
+
+
+
+
+
+
+
+
+  
   //Fazer Parse aqui, depois do Scan ter terminado.
-  StaticJsonDocument<128> root;
-  root["mac"] = serialized(mac_array_final);
+//  StaticJsonDocument<128> root;
+//  root["mac"] = serialized(mac_array_final);
  
-  char output[30];
-  serializeJson(root, output);
+  char output[128];
+  serializeJson(doc,Serial);
+  serializeJson(doc, output);
   if (client.publish("esp32/device", output) == true) {
     Serial.println("Success sending message");
   } else {
