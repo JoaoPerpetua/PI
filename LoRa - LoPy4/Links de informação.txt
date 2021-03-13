@@ -1,0 +1,5 @@
+https://docs.pycom.io/tutorials/networks/lora/module-module/
+
+https://docs.pycom.io/tutorials/networks/lora/lora-mac/
+
+Config gateway e conectar Lopy ----- https://pycom.io/lopy-lorawan-nano-gateway-using-micropython-and-ttn/

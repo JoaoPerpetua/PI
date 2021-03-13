@@ -144,7 +144,7 @@ void send_MQTT_data()
    
   char mac_array_final [3][15]; 
 
-   //Ciclo para enviar dados artificiais 
+  //Ciclo para enviar dados artificiais 
   for(uint8_t i = 0; i < 3; i++)
   {
     //Print da info dos beacons

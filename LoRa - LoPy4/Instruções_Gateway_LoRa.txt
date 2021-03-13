@@ -1,0 +1,11 @@
+
+Deverão ligar o gateway à alimentação, um monitor ao HDMI e um teclado ao USB. Na prática, o gateway é composto por um raspberry pi pelo que o acesso é o default.
+username: pi
+password: raspberry
+
+Depois de entrar, deverão correr o comando "sudo gateway-config" que dará uma interface com algumas opções. Deverão configurar o WiFi ou a LAN para que vá ao encontro do cenário de rede onde vão ligar o gateway. Ele poderá ligar por WiFi, como cliente, ou por Ethernet a um router existente. Por omissão, ele está com o WiFi em modo AP. Depois de configurado poderão aceder por SSH.
+
+O gateway já se encontra aprovisionado num LoRaWAN Server que está incluindo no próprio gateway pelo que tudo corre em localhost. As únicas tarefas será criar a aplicação, aprovisionar o sensor LoRaWAN e definir um endpoint HTTP para onde pretendem enviar os payloads do sensor. Este endpoint poderá ser para fora, se pretenderem fazer o desenvolvimento noutra plataforma, ou poderá ser em localhost se pretenderem fazer o desenvolvimento dentro do gateway.
+
+Aqui poderão encontrar alguma documentação de como configurar o gateway mas estaremos disponíveis para auxiliar, se for necessário. 
+https://docs.rakwireless.com/Product-Categories/WisLink/RAK2245-Pi-HAT/Quickstart/
