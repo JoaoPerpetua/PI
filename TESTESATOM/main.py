@@ -9,15 +9,15 @@ import ubinascii
 
 chrono = Timer.Chrono()
 
-
+active_state_pir = 0
 p_in = Pin('P10', mode=Pin.IN, pull=Pin.PULL_UP)
 p_in() # get value, 0 or 1
 chrono.start()
 while chrono.read() < 10: #10s até scan se houver movimento volta a 0s
     total = chrono.read()
-    if p_in() == 0:
+    if p_in() == active_state_pir:
         chrono.reset()
-        print('Houve reset')
+        print('New person - reset')
 
 
     print("\nthe racer took %f seconds to finish the race" % total)
