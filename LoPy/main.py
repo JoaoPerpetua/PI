@@ -8,7 +8,7 @@ button = Pin('P10', mode = Pin.IN)
 #Create BLE Instance
 bluetooth = Bluetooth()
 #Duration of the Scan
-TIME_SCANNING = 3
+TIME_SCANNING = 5
 
 
 def scan():
