@@ -201,12 +201,12 @@ void send_MQTT_data()
   }
   */
   //Fazer Parse aqui, depois do Scan ter terminado.
-  StaticJsonDocument<128> root;
+  StaticJsonDocument<256> root;
   root["mac"] = serialized(mac_array_final);
    
-  char output[30];
+  char output[55];
   serializeJson(root, output);
-  if (client.publish("esp32/device", output) == true) {
+  if (client.publish("esp/device", output) == true) {
     Serial.println("Success sending message");
   } else {
     Serial.println("Error sending message");
@@ -225,7 +225,7 @@ void reconnect() {
     if (client.connect("ESP8266Client")) {
       Serial.println("connected");
       // Subscribe
-      client.subscribe("esp32/device");
+      client.subscribe("esp/device");
     } else {
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
