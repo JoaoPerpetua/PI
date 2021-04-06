@@ -22,7 +22,7 @@ TIME_SCANNING = 3
 #Variable to hold the mac address
 macs = []
 #Variable that defines the pir active state
-active_state_pir = 0
+active_state_pir = 1
 #Variable that defines the time needed to have no movement for the scan
 buffer_timer = 5
 
@@ -108,10 +108,10 @@ def scan():
     return blescanmac
 
 def sleepmode():
-    switch=Pin('P10', Pin.IN, Pin.PULL_UP)
+    switch=Pin('P8', Pin.IN, Pin.PULL_UP)
 
     print ('switch', switch(), 'deepsleep')                               #read switch eg 0=on
-    machine.pin_sleep_wakeup(pins=['P10'],mode=not switch(),enable_pull=1)#wakeup when switch changes eg 1=off
+    machine.pin_sleep_wakeup(pins=['P8'],mode=not switch(),enable_pull=1)#wakeup when switch changes eg 1=off
     print('5 seconds before sleep')
     time.sleep(1)
     print('Going to sleep now')
@@ -123,7 +123,7 @@ def time_interruption():
     chrono = Timer.Chrono()
 
 
-    p_in = Pin('P10', mode=Pin.IN, pull=Pin.PULL_UP)
+    p_in = Pin('P8', mode=Pin.IN, pull=Pin.PULL_UP)
     p_in() # get value, 0 or 1
     chrono.start()
     while chrono.read() < buffer_timer: #10s até scan se houver movimento volta a 0s
