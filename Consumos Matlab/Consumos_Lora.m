@@ -81,9 +81,10 @@ autonomia_deep10 = bateria10./consumo_total_deep;
 k4 = 1:1:20;
 figure(1)
 plot(k4,autonomia_deep10,'c');
-
+yticks([128 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 5500 6000]);
+yticklabels({'128', '500', '1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '5000', '5500', '6000'});
 hold off
-legend("Deep sleep e 2 Ah","Deep sleep e 4 Ah","Deep sleep e 5 Ah","Deep sleep e 10 Ah" );
+legend("2Ah","4Ah","5Ah","10Ah" );
 title("Consumo Lopy4 com diferentes baterias")
 ylabel("Autonomia (dias)");
 xlabel("Número de leituras por dia");
