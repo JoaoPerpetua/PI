@@ -143,7 +143,7 @@ void send_MQTT_data()
   client.loop();
    
   char mac_array_final [3][15]; 
-
+  /*
   //Ciclo para enviar dados artificiais 
   for(uint8_t i = 0; i < 3; i++)
   {
@@ -177,14 +177,14 @@ void send_MQTT_data()
             }                           
            } 
       }
-  }
+  }*/
 
    //Ciclo para enviar os dados do Scan 
-  /*
+  
   for(uint8_t i = 0; i < n_beacons; i++)
   {
     //Print da info dos beacons
-    //Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
+    Serial.printf("Beacon #%d    Address %s\n", i, mac_array[i]); 
     
     //Eliminação dos dados guardados na variável dos MACs
    
@@ -199,7 +199,7 @@ void send_MQTT_data()
           } 
         }
   }
-  */
+  
   //Fazer Parse aqui, depois do Scan ter terminado.
   StaticJsonDocument<256> root;
   root["mac"] = serialized(mac_array_final);

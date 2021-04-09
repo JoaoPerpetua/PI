@@ -27,12 +27,12 @@ boolean startTimer = false;
 const char* ssid = "MEO-LEVEL1";
 const char* password = "c19371c76b";
 const char* mqtt_server = "192.168.1.97";
-/**
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
-*/
+
 uint8_t value = 0;
 
 
@@ -103,7 +103,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
       }
     }
 };
-/*
+
 void setup_wifi() {
   delay(10);
   // We start by connecting to a WiFi network
@@ -116,7 +116,7 @@ void setup_wifi() {
     Serial.print(".");
   }
   Serial.println("WiFi connected");
-}*/
+}
 
 void scan()
 {
@@ -134,13 +134,13 @@ void scan()
 
 void send_MQTT_data()
 {
-  /*
+  
   //mqtt
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
-   */
+   
   char mac_array_final [n_beacons][14]; 
 
   for(uint8_t i = 0; i < n_beacons; i++)
@@ -162,9 +162,9 @@ void send_MQTT_data()
         }
   }
   //Fazer Parse aqui, depois do Scan ter terminado.
-  //StaticJsonDocument<128> root;
-  //root["mac"] = serialized(mac_array_final);
- /*
+  StaticJsonDocument<128> root;
+  root["mac"] = serialized(mac_array_final);
+
   char output[30];
   serializeJson(root, output);
   if (client.publish("esp32/device", output) == true) {
@@ -172,12 +172,12 @@ void send_MQTT_data()
   } else {
     Serial.println("Error sending message");
   }
-*/
+
   // delete results fromBLEScan buffer to release memory
   pBLEScan->clearResults(); 
   n_beacons = 0; 
 }
-/*
+
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -194,7 +194,7 @@ void reconnect() {
     }
   }
 }
-*/
+
 /*
 void go_to_sleep(){
 
@@ -225,8 +225,8 @@ void setup()
   pBLEScan->setInterval(100);
   pBLEScan->setWindow(99); // less or equal setInterval value
   // MQTT
-  //setup_wifi();
-  //client.setServer(mqtt_server, 1883);
+  setup_wifi();
+  client.setServer(mqtt_server, 1883);
   //client.setCallback(callback);
 
   // PIR Motion Sensor mode INPUT_PULLUP
