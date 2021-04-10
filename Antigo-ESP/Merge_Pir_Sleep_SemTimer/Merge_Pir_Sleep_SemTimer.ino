@@ -152,7 +152,7 @@ void send_MQTT_data()
    
       for(uint8_t k = 0; k < 14; k++)
         {
-          if((k==0)||k==14) {
+          if((k==0)||k==13) {
             mac_array_final[i][k] = '"';
           }
           else{
@@ -167,7 +167,7 @@ void send_MQTT_data()
 
   char output[30];
   serializeJson(root, output);
-  if (client.publish("esp32/device", output) == true) {
+  if (client.publish("esp/device", output) == true) {
     Serial.println("Success sending message");
   } else {
     Serial.println("Error sending message");
@@ -186,7 +186,7 @@ void reconnect() {
     if (client.connect("ESP8266Client")) {
       Serial.println("connected");
       // Subscribe
-      client.subscribe("esp32/device");
+      client.subscribe("esp/device");
     } else {
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
