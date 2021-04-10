@@ -114,8 +114,9 @@ void scan()
 }
 void setup() {
   // Serial port for debugging purposes
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_32,1);
   Serial.begin(115200);
-  
+  Serial.print("Wake up");
 
   //BLE Configurations Setup
   BLEDevice::init("");
@@ -125,10 +126,10 @@ void setup() {
   pBLEScan->setInterval(100);
   pBLEScan->setWindow(99); // less or equal setInterval value
   
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34,0);
+  
   
   scan(); 
-  Serial.println("ZZZZ"); 
+  //Serial.println("ZZZZ"); 
   esp_deep_sleep_start();
 }
 
