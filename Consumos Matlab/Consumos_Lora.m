@@ -85,6 +85,7 @@ yticks([128 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 5500 6000]);
 yticklabels({'128', '500', '1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '5000', '5500', '6000'});
 hold off
 legend("2Ah","4Ah","5Ah","10Ah" );
-title("Consumo Lopy4 com diferentes baterias")
-ylabel("Autonomia (dias)");
-xlabel("Número de leituras por dia");
+grid on
+%title("Consumo Lopy4 com diferentes baterias")
+ylabel("Autonomy (days)");
+xlabel("Number of scans per day");
