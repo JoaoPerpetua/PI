@@ -1,13 +1,13 @@
 clear all;
 clc;
 
-pir = 18.6e-6;
+pir = 0;
 lora_receive = 0.094;
 lora_transmit = 0.015;
-deep_sleep = 30e-6;
+deep_sleep = 60e-6;
 
-tempo_rx = 0.5;
-tempo_tx = 1;
+tempo_rx = 2;
+tempo_tx = 2;
 tempo_ativo_rx = tempo_rx/3600;
 tempo_ativo_tx = tempo_tx/3600;
 tempo_ativo = tempo_ativo_rx + tempo_ativo_tx;
@@ -81,8 +81,8 @@ autonomia_deep10 = bateria10./consumo_total_deep;
 k4 = 1:1:20;
 figure(1)
 plot(k4,autonomia_deep10,'c');
-yticks([128 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 5500 6000]);
-yticklabels({'128', '500', '1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '5000', '5500', '6000'});
+%yticks([128 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 5500 6000]);
+%yticklabels({'128', '500', '1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '5000', '5500', '6000'});
 hold off
 legend("2Ah","4Ah","5Ah","10Ah" );
 grid on
