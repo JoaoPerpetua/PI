@@ -6,3 +6,4 @@ import network
 pycom.heartbeat(False)  # disable the heartbeat LED
 #wlan.deinit()           #disable WiFi Radio
 #MDNS.deinit()
+pycom.wifi_on_boot(False)

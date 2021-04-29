@@ -11,8 +11,8 @@ pycom.heartbeat(False)
 chrono = Timer.Chrono()
 time_detect = 10
 time_sleep = 100000
-active_state_pir = 1 #Para o Pir usar 1
-p_in = Pin('P8', mode=Pin.IN, pull=Pin.PULL_UP) #pin P8 para o pir
+active_state_pir = 0 #Para o Pir usar 1
+p_in = Pin('P10', mode=Pin.IN, pull=Pin.PULL_UP) #pin P8 para o pir
 p_in() # get value, 0 or 1
 chrono.start()
 while chrono.read() < time_detect: #10s até scan se houver movimento volta a 0s
@@ -35,8 +35,8 @@ blescanmac = []
 blescanmac.clear()
 print("Scanning BLE devices")
 bluetooth.start_scan(2)
-t_end = time.time() + 6
-while time.time() < t_end:
+#t_end = time.time() + 2
+while bluetooth.isscanning():
     #collect adv packet from BLE scan
     adv=bluetooth.get_adv()
     #if there are ADV packets
@@ -54,11 +54,11 @@ print("BLE Mac Addresses: ")
 print(blescanmac)
 
 print('Start sleeping mode')
-switch=Pin('P8', Pin.IN, Pin.PULL_UP)
+switch=Pin('P10', Pin.IN, Pin.PULL_UP)
 
 print ('switch', switch(), 'deepsleep')                               #read switch eg 0=on
-machine.pin_sleep_wakeup(pins=['P8'],mode=not switch(),enable_pull=1)#wakeup when switch changes eg 1=off
-print('5 seconds before sleep')
-time.sleep(5)
-print('Going to sleep now')
+machine.pin_sleep_wakeup(pins=['P10'],mode=not switch(),enable_pull=1)#wakeup when switch changes eg 1=off
+#print('5 seconds before sleep')
+#time.sleep(5)
+#print('Going to sleep now')
 machine.deepsleep()
