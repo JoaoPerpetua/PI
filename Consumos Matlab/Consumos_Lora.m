@@ -2,12 +2,12 @@ clear all;
 clc;
 
 pir = 0;
-lora_receive = 0.094;
-lora_transmit = 0.015;
-deep_sleep = 60e-6;
+ble_receive = 0.120;
+lora_transmit = 0.120;
+deep_sleep = 48e-6;
 
-tempo_rx = 2;
-tempo_tx = 2;
+tempo_rx = 12.5;
+tempo_tx = 12.5;
 tempo_ativo_rx = tempo_rx/3600;
 tempo_ativo_tx = tempo_tx/3600;
 tempo_ativo = tempo_ativo_rx + tempo_ativo_tx;
@@ -18,7 +18,7 @@ bateria = 2
 for k = 1:1:20
     consumo_pir = pir*24;
     consumo_lora_tx(k) = lora_transmit*24*tempo_ativo_tx*k;
-    consumo_lora_rx(k) = lora_receive*24*tempo_ativo_tx*k;
+    consumo_lora_rx(k) = ble_receive*24*tempo_ativo_tx*k;
     consumo_lora_deep = deep_sleep*24*(1-2*tempo_ativo);
     
     consumo_total_deep = consumo_pir+consumo_lora_rx+consumo_lora_tx+consumo_lora_deep;
@@ -35,7 +35,7 @@ bateria2 = 4
 for k = 1:1:20
     consumo_pir = pir*24;
     consumo_lora_tx(k) = lora_transmit*24*tempo_ativo_tx*k;
-    consumo_lora_rx(k) = lora_receive*24*tempo_ativo_tx*k;
+    consumo_lora_rx(k) = ble_receive*24*tempo_ativo_tx*k;
     consumo_lora_deep = deep_sleep*24*(1-2*tempo_ativo);
     
     consumo_total_deep = consumo_pir+consumo_lora_rx+consumo_lora_tx+consumo_lora_deep;
@@ -51,7 +51,7 @@ bateria5 = 5;
 for k = 1:1:20
     consumo_pir = pir*24;
     consumo_lora_tx(k) = lora_transmit*24*tempo_ativo_tx*k;
-    consumo_lora_rx(k) = lora_receive*24*tempo_ativo_tx*k;
+    consumo_lora_rx(k) = ble_receive*24*tempo_ativo_tx*k;
     consumo_lora_deep = deep_sleep*24*(1-2*tempo_ativo);
     
     consumo_total_deep = consumo_pir+consumo_lora_rx+consumo_lora_tx+consumo_lora_deep;
@@ -69,7 +69,7 @@ bateria10 = 10;
 for k = 1:1:20
     consumo_pir = pir*24;
     consumo_lora_tx(k) = lora_transmit*24*tempo_ativo_tx*k;
-    consumo_lora_rx(k) = lora_receive*24*tempo_ativo_tx*k;
+    consumo_lora_rx(k) = ble_receive*24*tempo_ativo_tx*k;
     consumo_lora_deep = deep_sleep*24*(1-2*tempo_ativo);
     
     consumo_total_deep = consumo_pir+consumo_lora_rx+consumo_lora_tx+consumo_lora_deep;
