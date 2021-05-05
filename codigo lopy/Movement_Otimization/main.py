@@ -10,22 +10,24 @@ import pycom
 pycom.heartbeat(False)
 chrono = Timer.Chrono()
 time_detect = 10
-time_sleep = 100000
+time_sleep = 5000
 active_state_pir = 0 #Para o Pir usar 1
 p_in = Pin('P10', mode=Pin.IN, pull=Pin.PULL_UP) #pin P8 para o pir
 p_in() # get value, 0 or 1
-chrono.start()
-while chrono.read() < time_detect: #10s até scan se houver movimento volta a 0s
-    total = chrono.read()
-    if p_in() == active_state_pir:
-        print('New person - Going to sleep')
-        machine.deepsleep(time_sleep) #ms time
+
+
+#chrono.start()
+#while chrono.read() < time_detect: #10s até scan se houver movimento volta a 0s
+#    total = chrono.read()
+if p_in() == active_state_pir:
+    print('New person - Going to sleep')
+    machine.deepsleep(time_sleep) #ms time
 
 
 
 
-    print("\nthe racer took %f seconds to finish the race" % total)
-print('Scan...')
+#    print("\nthe racer took %f seconds to finish the race" % total)
+#print('Scan...')
 
 bluetooth = Bluetooth()
 # Mac Address Array
