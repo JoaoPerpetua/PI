@@ -2,11 +2,11 @@ clear all;
 clc;
 
 pir = 0;
-ble_receive = 0.120;
-lora_transmit = 0.120;
+ble_receive = 0.100;
+lora_transmit = 0.100;
 deep_sleep = 48e-6;
 
-tempo_rx = 3;
+tempo_rx = 10;
 tempo_tx = 5;
 tempo_ativo_rx = tempo_rx/3600;
 tempo_ativo_tx = tempo_tx/3600;
@@ -85,6 +85,7 @@ plot(k4,autonomia_deep10,'c');
 %yticklabels({'128', '500', '1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '5000', '5500', '6000'});
 hold off
 legend("2Ah","4Ah","5Ah","10Ah" );
+axis([0 20 0 400])
 grid on
 %title("Consumo Lopy4 com diferentes baterias")
 ylabel("Autonomy (days)");
