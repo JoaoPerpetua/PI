@@ -1,9 +1,11 @@
-needs to install:
+needs to install(this order):
 -virtual env
+-django
 -django_tables2
+-psycopg2_binary
 -bootstrap4
 -bootstrap3
--psycopg2_binary
+
 
 
 to run the project
