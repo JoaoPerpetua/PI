@@ -26,6 +26,7 @@ active_state_pir = 0
 #Variable that defines the time needed to have no movement for the scan
 buffer_timer = 10
 
+time_sleep = 10000
 def loracom(send):
     # Initialise LoRa in LORAWAN mode.
     # Europe = LoRa.EU868
@@ -114,20 +115,18 @@ def sleepmode():
 
 
 def time_interruption():
-    chrono = Timer.Chrono()
-
-
+    #chrono = Timer.Chrono()
     p_in = Pin('P10', mode=Pin.IN, pull=Pin.PULL_UP)
     p_in() # get value, 0 or 1
-    chrono.start()
-    while chrono.read() < buffer_timer: #10s até scan se houver movimento volta a 0s
-        total = chrono.read()
-        print(p_in())
-        if p_in() ==  active_state_pir:
-            chrono.reset()
-            print('New person - reset')
+    #chrono.start()
+    #while chrono.read() < buffer_timer: #10s até scan se houver movimento volta a 0s
+        #total = chrono.read()
+        #print(p_in())
+    if p_in() ==  active_state_pir:
+        machine.deepsleep(time_sleep)
+            #print('New person - reset')
 
-        print("\nthe racer took %f seconds to finish the race" % total)
+        #print("\nthe racer took %f seconds to finish the race" % total)
 
 
 
