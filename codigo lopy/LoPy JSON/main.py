@@ -18,11 +18,11 @@ import socket
 #Create BLE Instance
 bluetooth = Bluetooth()
 #Duration of the Scan
-TIME_SCANNING = 2
+TIME_SCANNING = 10
 #Variable to hold the mac address
 macs = []
 #Variable that defines the pir active state
-active_state_pir = 0
+active_state_pir = 1
 #Variable that defines the time needed to have no movement for the scan
 buffer_timer = 10
 
@@ -30,7 +30,7 @@ time_sleep = 10000
 def loracom(send):
     # Initialise LoRa in LORAWAN mode.
     # Europe = LoRa.EU868
-    lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
+    lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868, tx_power=7 , power_mode=LoRa.TX_ONLY)
     # create an OTAA authentication parameters, change them to the provided credentials
     app_eui = ubinascii.unhexlify('b827ebfffeb77faa')
     app_key = ubinascii.unhexlify('f8b476241432768a624a684a91078590')
@@ -38,7 +38,7 @@ def loracom(send):
     lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
     # wait until the module has joined the network
     while not lora.has_joined():
-        time.sleep(2.5)
+        time.sleep(0.5)
         print('Not yet joined...')
 
     print('Joined')
@@ -105,26 +105,28 @@ def scan():
     return blescanmac
 
 def sleepmode():
-    switch=Pin('P10', Pin.IN, Pin.PULL_UP)
+    switch=Pin('P8', Pin.IN, Pin.PULL_UP)
 
     print ('switch', switch(), 'deepsleep')                               #read switch eg 0=on
-    machine.pin_sleep_wakeup(pins=['P10'],mode=not switch(),enable_pull=1)#wakeup when switch changes eg 1=off
+    machine.pin_sleep_wakeup(pins=['P8'],mode=not switch(),enable_pull=1)#wakeup when switch changes eg 1=off
     print('Going to sleep now')
 
     machine.deepsleep()
 
 
 def time_interruption():
-    #chrono = Timer.Chrono()
-    p_in = Pin('P10', mode=Pin.IN, pull=Pin.PULL_UP)
+    chrono = Timer.Chrono()
+    print('WAKE UP')
+    p_in = Pin('P8', mode=Pin.IN, pull=Pin.PULL_UP)
     p_in() # get value, 0 or 1
-    #chrono.start()
-    #while chrono.read() < buffer_timer: #10s até scan se houver movimento volta a 0s
-        #total = chrono.read()
+    chrono.start()
+    while chrono.read() < 0.2: #10s até scan se houver movimento volta a 0s
+        total = chrono.read()
         #print(p_in())
-    if p_in() ==  active_state_pir:
-        machine.deepsleep(time_sleep)
-            #print('New person - reset')
+        if p_in() ==  active_state_pir:
+            print('Going to sleep')
+            machine.deepsleep(time_sleep)
+
 
         #print("\nthe racer took %f seconds to finish the race" % total)
 

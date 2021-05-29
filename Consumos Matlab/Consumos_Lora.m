@@ -7,7 +7,7 @@ lora_transmit = 0.100;
 deep_sleep = 48e-6;
 
 tempo_rx = 10;
-tempo_tx = 5;
+tempo_tx = 7.5;
 tempo_ativo_rx = tempo_rx/3600;
 tempo_ativo_tx = tempo_tx/3600;
 tempo_ativo = tempo_ativo_rx + tempo_ativo_tx;
