@@ -2,7 +2,7 @@ clear all;
 clc;
 
 pir = 0;
-ble_receive = 0.100;
+ble_receive = 0.130;
 lora_transmit = 0.100;
 deep_sleep = 48e-6;
 
