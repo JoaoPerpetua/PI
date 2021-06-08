@@ -26,7 +26,7 @@ active_state_pir = 1
 #Variable that defines the time needed to have no movement for the scan
 buffer_timer = 10
 
-time_sleep = 10000
+time_sleep_min = 10 #10minutos
 def loracom(send):
     # Initialise LoRa in LORAWAN mode.
     # Europe = LoRa.EU868
@@ -108,7 +108,7 @@ def sleepmode():
     switch=Pin('P8', Pin.IN, Pin.PULL_UP)
 
     print ('switch', switch(), 'deepsleep')                               #read switch eg 0=on
-    machine.pin_sleep_wakeup(pins=['P8'],mode=not switch(),enable_pull=1)#wakeup when switch changes eg 1=off
+    machine.pin_sleep_wakeup(pins=['P8'],mode=not switch(),enable_pull=1) #wakeup when switch changes eg 1=off
     print('Going to sleep now')
 
     machine.deepsleep()
@@ -120,13 +120,12 @@ def time_interruption():
     p_in = Pin('P8', mode=Pin.IN, pull=Pin.PULL_UP)
     p_in() # get value, 0 or 1
     chrono.start()
-    while chrono.read() < 0.2: #10s até scan se houver movimento volta a 0s
+    while chrono.read() < 0.2: #Se o PIR estiver ativo dormir por time_sleep_min 
         total = chrono.read()
         #print(p_in())
         if p_in() ==  active_state_pir:
             print('Going to sleep')
-            machine.deepsleep(time_sleep)
-
+            machine.deepsleep(time_sleep_min*60*1000)
 
         #print("\nthe racer took %f seconds to finish the race" % total)
 
