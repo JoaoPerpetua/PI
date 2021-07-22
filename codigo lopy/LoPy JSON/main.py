@@ -26,7 +26,7 @@ active_state_pir = 1
 #Variable that defines the time needed to have no movement for the scan
 buffer_timer = 10
 
-time_sleep_min = 10 #10minutos
+time_sleep_ms = 60000 #1minuto
 def loracom(send):
     # Initialise LoRa in LORAWAN mode.
     # Europe = LoRa.EU868
@@ -42,17 +42,14 @@ def loracom(send):
         print('Not yet joined...')
 
     print('Joined')
-
     # create a LoRa socket
     s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
-
     # set the LoRaWAN data rate
     s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
     # make the socket blocking
     # (waits for the data to be sent and for the 2 receive windows to expire)
     s.setblocking(True)
     # send some data
-
     s.send(send)
     # make the socket non-blocking
     # (because if there's no data received it will block forever...)
@@ -85,12 +82,12 @@ def scan():
                 print(mac)
                 blescanmac.append(mac)
 
-            if mfg_data:
+            #if mfg_data:
                 #try to get the manufacturer data (Apple's iBeacon data is sent here)
-                print("iBeacon")
-                mac=ubinascii.hexlify(adv.mac)
-                print(mac)
-                blescanmac.append(mac)
+            #    print("iBeacon")
+            #    mac=ubinascii.hexlify(adv.mac)
+            #    print(mac)
+            #    blescanmac.append(mac)
 
     print("Finish Scan")
     #Print Scan result
@@ -106,11 +103,9 @@ def scan():
 
 def sleepmode():
     switch=Pin('P8', Pin.IN, Pin.PULL_UP)
-
     print ('switch', switch(), 'deepsleep')                               #read switch eg 0=on
     machine.pin_sleep_wakeup(pins=['P8'],mode=not switch(),enable_pull=1) #wakeup when switch changes eg 1=off
     print('Going to sleep now')
-
     machine.deepsleep()
 
 
@@ -120,12 +115,12 @@ def time_interruption():
     p_in = Pin('P8', mode=Pin.IN, pull=Pin.PULL_UP)
     p_in() # get value, 0 or 1
     chrono.start()
-    while chrono.read() < 0.2: #Se o PIR estiver ativo dormir por time_sleep_min 
+    while chrono.read() < 0.05: #Se o PIR estiver ativo dormir por time_sleep_min
         total = chrono.read()
         #print(p_in())
         if p_in() ==  active_state_pir:
             print('Going to sleep')
-            machine.deepsleep(time_sleep_min*60*1000)
+            machine.deepsleep(time_sleep_ms)
 
         #print("\nthe racer took %f seconds to finish the race" % total)
 

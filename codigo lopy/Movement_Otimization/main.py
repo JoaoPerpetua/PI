@@ -58,8 +58,6 @@ def loracom(send):
     # (because if there's no data received it will block forever...)
     s.setblocking(False)
 
-
-
 def scan():
     #BLE's Mac Array
     blescanmac = []
